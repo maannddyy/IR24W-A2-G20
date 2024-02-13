@@ -37,6 +37,10 @@ def extract_next_links(url, resp):
     if resp.status != 200:
         return list()
 
+    redir_resp = detect_redirects(resp.url)
+    if redir_resp is not None:
+        resp = redir_resp
+
 
     soup = BeautifulSoup(resp.raw_response.content, "html.parser")
     content = soup.get_text()
@@ -44,7 +48,7 @@ def extract_next_links(url, resp):
     num_tokens = tokenize(content)
 
     # checks for longest page
-    global longest_page
+    # global longest_page
     if num_tokens > longest_page[1]:
         longest_page = [url, num_tokens]
 
@@ -61,8 +65,6 @@ def extract_next_links(url, resp):
             #keep track of subdomains
             subdomain = get_subdomains(defrag_link)
             subdomain_frequencies[subdomain] = subdomain_frequencies.get(subdomain, 0)+ 1
-
-
 
     return valid_links
 
@@ -117,12 +119,29 @@ def get_subdomains(url):
     parsed_url = urlparse(url)
     subdomain_parts = parsed_url.netloc.split('.')
     if len(subdomain_parts) >=3:
-        return "."join(subdomain_parts[-3:])
+        return ".".join(subdomain_parts[-3:])
     return parsed_url.netloc
+
+def detect_redirects(url):
+    # Detect redirects and if the page redirects your crawler, index the redirected content
+    try:
+        response = requests.get(url, allow_redirects=True)
+        redir_url = response.url
+        if redir_url != url:
+            print("redirect detected to:", redir_url)
+        else:
+            print("no redirects")
+
+        return response
+    except requests.exceptions.RequestException as e:
+        print("error:", e)
+        return None
+
+
+
 
 def report():
     print("LONGEST PAGE:", longest_page)
     
 
 if __name__ == "__main__":
-    
