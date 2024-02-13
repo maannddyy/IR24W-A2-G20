@@ -86,7 +86,6 @@ def extract_next_links(url, resp):
             valid_links.append(defrag_link)
             seen.add(defrag_link)
             
-    report()
     return valid_links
 
 

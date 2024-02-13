@@ -1,2 +1,2 @@
-LONGEST WORD: https://www.stat.uci.edu/conference-experience-confirms-competitive-edge-of-ics-capstone-program
-UNIQUE PAGES: 6
+LONGEST WORD: http://www.informatics.uci.edu/files/pdf/InformaticsBrochure-March2018
+UNIQUE PAGES: 993
