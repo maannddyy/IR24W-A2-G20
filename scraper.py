@@ -28,10 +28,10 @@ def extract_next_links(url, resp):
     # Return a list with the hyperlinks (as strings) scrapped from resp.raw_response.content
     
     # TO DO (in order of urgency):
-    # - KEEP TRACK OF SUBDOMAINS
     # - Detect redirects and if the page redirects your crawler, index the redirected content
-    # - Check for similarities
     # - Detect and avoid crawling very large files, especially if they have low information value
+    # - Check for similarities (optional)
+
     if resp.status != 200:
         return list()
     if resp.url != url:
