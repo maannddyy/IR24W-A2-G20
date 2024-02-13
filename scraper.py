@@ -32,7 +32,6 @@ def extract_next_links(url, resp):
     # - Detect redirects and if the page redirects your crawler, index the redirected content
     # - Check for similarities
     # - Detect and avoid crawling very large files, especially if they have low information value
-    print(url, resp.status)
     if resp.status != 200:
         return list()
     if resp.url != url:
@@ -45,6 +44,7 @@ def extract_next_links(url, resp):
     # if redir_resp is not None:
     #     resp = redir_resp
 
+    visited_urls.add(url)
 
     soup = BeautifulSoup(resp.raw_response.content, "html.parser")
     content = soup.get_text()
@@ -69,12 +69,13 @@ def extract_next_links(url, resp):
     all_links = [link['href'] for link in soup.find_all('a', href=True)]
     valid_links = list()
 
+    seen = set()
+
     for link in all_links:
         defrag_link = urldefrag(link)[0]
-        if defrag_link not in visited_urls and is_valid(defrag_link):
+        if defrag_link not in visited_urls and is_valid(defrag_link) and defrag_link not in seen:
             valid_links.append(defrag_link)
-            visited_urls.add(defrag_link)
-
+            seen.add(defrag_link)
             
     report()
     return valid_links
@@ -93,7 +94,6 @@ def tokenize(content):
     for token in tokens:
         if token not in STOP_WORDS:
             token_frequencies[token] = token_frequencies.get(token, 0) + 1   # records frequencies of tokens of all pages crawled
-    
     return len(tokens)
 
 def is_trap():
@@ -153,8 +153,8 @@ def get_subdomains(url):
 
 
 def report():
-
-    report = f"LONGEST WORD: {longest_word}\nUNIQUE PAGES: {len(visited_urls)}"
+    global longest_page
+    report = f"LONGEST WORD: {longest_page[0]}\nUNIQUE PAGES: {len(visited_urls)}"
     f = open("report.txt", "w")
     f.write(report)
     f.close()
@@ -170,7 +170,7 @@ def report():
 
     words = ""
     count = 0
-    for key, value in sorted(subdomain_frequencies.items, key=lambda x:x[1], reverse=True):
+    for key, value in sorted(token_frequencies.items(), key=lambda x:x[1], reverse=True):
         if count > 50:
             break
         words += f"{key}\n"
