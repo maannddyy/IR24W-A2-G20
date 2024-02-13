@@ -35,6 +35,11 @@ def extract_next_links(url, resp):
 
     if resp.status != 200:
         return list()
+    if resp.url != url:
+        print("redirect detected from", url, 'to:', resp.url)
+        #redirected content stored? idk if needed to index
+        redir_content = resp.raw_response.content
+
 
     # redir_resp = detect_redirects(resp.url)
     # if redir_resp is not None:
@@ -126,6 +131,8 @@ def get_subdomains(url):
     if len(subdomain_parts) >=3:
         return ".".join(subdomain_parts[-3:])
     return parsed_url.netloc
+#must sort too
+
 
 # def detect_redirects(url):
 #     # Detect redirects and if the page redirects your crawler, index the redirected content
@@ -141,7 +148,6 @@ def get_subdomains(url):
 #     except requests.exceptions.RequestException as e:
 #         print("error:", e)
 #         return None
-
 
 
 
