@@ -32,7 +32,7 @@ def extract_next_links(url, resp):
     # - Detect redirects and if the page redirects your crawler, index the redirected content
     # - Check for similarities
     # - Detect and avoid crawling very large files, especially if they have low information value
-
+    print(url, resp.status)
     if resp.status != 200:
         return list()
 
@@ -47,14 +47,15 @@ def extract_next_links(url, resp):
     num_tokens = tokenize(content)
 
     # checks for longest page
-    # global longest_page
+    global longest_page
     if num_tokens > longest_page[1]:
         longest_page = [url, num_tokens]
 
     #keep track of subdomains
+    parsed = urlparse(url)
     parsed_netloc = parsed.netloc.split('.')
     if len(parsed_netloc) > 3 and ".".join(parsed_netloc[-3:]) == "ics.uci.edu":
-        subdomain_frequencies[parsed_netloc] = subdomain_frequencies.get(parsed_netloc, 0) + 1
+        subdomain_frequencies[parsed.netloc] = subdomain_frequencies.get(parsed.netloc, 0) + 1
 
     # subdomain = get_subdomains(defrag_link)
     # subdomain_frequencies[subdomain] = subdomain_frequencies.get(subdomain, 0)+ 1
@@ -70,7 +71,7 @@ def extract_next_links(url, resp):
             visited_urls.add(defrag_link)
 
             
-
+    report()
     return valid_links
 
 
@@ -146,7 +147,33 @@ def get_subdomains(url):
 
 
 def report():
-    print("LONGEST PAGE:", longest_page)
+
+    report = f"LONGEST WORD: {longest_word}\nUNIQUE PAGES: {len(visited_urls)}"
+    f = open("report.txt", "w")
+    f.write(report)
+    f.close()
+
+    subdomains = ""
+
+    for key in sorted(subdomain_frequencies.keys()):
+        subdomains += f"{key} {subdomain_frequencies[key]}\n"
+    
+    f = open("subdomains.txt", "w")
+    f.write(subdomains)
+    f.close()
+
+    words = ""
+    count = 0
+    for key, value in sorted(subdomain_frequencies.items, key=lambda x:x[1], reverse=True):
+        if count > 50:
+            break
+        words += f"{key}\n"
+        count += 1
+
+    f = open("wordfrequencies.txt", "w")
+    f.write(words)
+    f.close()
+
     
 
 if __name__ == "__main__":
