@@ -9,6 +9,7 @@ token_frequencies = dict()  # frequencies of all tokens excluding stop words
 longest_page = ["ics.uci.edu", 0]
 subdomain_frequencies = dict()  # ics.uci.edu subdomains
 visited_urls = set()
+visited_paths = dict()
 
 
 
@@ -62,8 +63,7 @@ def extract_next_links(url, resp):
     if len(parsed_netloc) > 3 and ".".join(parsed_netloc[-3:]) == "ics.uci.edu":
         subdomain_frequencies[parsed.netloc] = subdomain_frequencies.get(parsed.netloc, 0) + 1
 
-    # subdomain = get_subdomains(defrag_link)
-    # subdomain_frequencies[subdomain] = subdomain_frequencies.get(subdomain, 0)+ 1
+    visited_paths[(parsed.netloc, parsed.path)] = visited_paths.get((parsed.netloc, parsed.path), 0) + 1
 
     # extract links using parsed beautiful soup content
     all_links = [link['href'] for link in soup.find_all('a', href=True)]
@@ -74,6 +74,9 @@ def extract_next_links(url, resp):
     for link in all_links:
         defrag_link = urldefrag(link)[0]
         if defrag_link not in visited_urls and is_valid(defrag_link) and defrag_link not in seen:
+            parsed_link = urlparse(defrag_link)
+            if (parsed_link.netloc, parsed_path.netloc) in visited_paths and visited_paths[(parsed_link.netloc, parsed_path.netloc)] > 10:
+                continue
             valid_links.append(defrag_link)
             seen.add(defrag_link)
             
@@ -114,7 +117,7 @@ def is_valid(url):
             return False
         return not re.match(
             r".*\.(css|js|bmp|gif|jpe?g|ico"
-            + r"|png|tiff?|mid|mp2|mp3|mp4"
+            + r"|png|tiff?|mid|mp2|mp3|mp4|jpg"
             + r"|wav|avi|mov|mpeg|ram|m4v|mkv|ogg|ogv|pdf"
             + r"|ps|eps|tex|ppt|pptx|doc|docx|xls|xlsx|names"
             + r"|data|dat|exe|bz2|tar|msi|bin|7z|psd|dmg|iso"
