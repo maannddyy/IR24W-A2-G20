@@ -63,7 +63,7 @@ def extract_next_links(url, resp):
     if len(parsed_netloc) > 3 and ".".join(parsed_netloc[-3:]) == "ics.uci.edu":
         subdomain_frequencies[parsed.netloc] = subdomain_frequencies.get(parsed.netloc, 0) + 1
 
-    visited_paths[(parsed.netloc, parsed.path)] = visited_paths.get((parsed.netloc, parsed.path), 0) + 1
+    visited_paths[parsed.netloc + parsed.path] = visited_paths.get(parsed.netloc + parsed.path, 0) + 1
 
     # extract links using parsed beautiful soup content
     all_links = [link['href'] for link in soup.find_all('a', href=True)]
@@ -75,7 +75,7 @@ def extract_next_links(url, resp):
         defrag_link = urldefrag(link)[0]
         if defrag_link not in visited_urls and is_valid(defrag_link) and defrag_link not in seen:
             parsed_link = urlparse(defrag_link)
-            if (parsed_link.netloc, parsed_path.netloc) in visited_paths and visited_paths[(parsed_link.netloc, parsed_path.netloc)] > 10:
+            if parsed_link.netloc + parsed_link.path in visited_paths and visited_paths[parsed_link.netloc + parsed_link.path] > 10:
                 continue
             valid_links.append(defrag_link)
             seen.add(defrag_link)

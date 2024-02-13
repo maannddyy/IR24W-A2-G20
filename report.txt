@@ -1,2 +1,2 @@
-LONGEST WORD: http://www.informatics.uci.edu/files/pdf/InformaticsBrochure-March2018
-UNIQUE PAGES: 8431
+LONGEST WORD: https://www.stat.uci.edu/dont-think-you-can-learn-bayesian-statistics-think-again-with-bayes-rules
+UNIQUE PAGES: 25
