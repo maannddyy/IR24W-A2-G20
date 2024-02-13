@@ -92,7 +92,7 @@ def tokenize(content):
     # add tokens to frequencies dict
     frequencies = dict()
     for token in tokens:
-        if token not in STOP_WORDS:
+        if token not in STOP_WORDS and len(token) > 1:
             token_frequencies[token] = token_frequencies.get(token, 0) + 1   # records frequencies of tokens of all pages crawled
     return len(tokens)
 
