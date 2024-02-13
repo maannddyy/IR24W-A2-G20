@@ -64,7 +64,7 @@ def extract_next_links(url, resp):
         subdomain_frequencies[parsed.netloc] = subdomain_frequencies.get(parsed.netloc, 0) + 1
 
     # keep track of visited domains/paths to detect calendar traps
-    visited_paths[parsed.netloc + parsed.path] = visited_paths.get(parsed.netloc + parsed.path, 0) + 1
+    # visited_paths[parsed.netloc + parsed.path] = visited_paths.get(parsed.netloc + parsed.path, 0) + 1
 
     # extract links using parsed beautiful soup content
     all_links = [link['href'] for link in soup.find_all('a', href=True)]
@@ -83,8 +83,11 @@ def extract_next_links(url, resp):
             # filter for calendar traps
             if parsed_link.netloc + parsed_link.path in visited_paths and visited_paths[parsed_link.netloc + parsed_link.path] > 10:
                 continue
+
             valid_links.append(defrag_link)
             seen.add(defrag_link)
+             # keep track of visited domains/paths to detect calendar traps
+            visited_paths[parsed_link.netloc + parsed_link.path] = visited_paths.get(parsed_link.netloc + parsed_link.path, 0) + 1
             
     return valid_links
 
