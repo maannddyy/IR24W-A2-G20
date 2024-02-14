@@ -52,8 +52,8 @@ def extract_next_links(url, resp):
 
     num_tokens = tokenize(content)
 
-    if len(content) == 0 or (len(content) > 5000000 and num_tokens / len(content) < 0.05):
-        print("not crawled: ", num_tokens, len(content))
+    # filters out pages with no content and large pages with low data value
+    if len(content) == 0 or (len(content) > 1000000 and num_tokens / len(content) < 0.1):
         return list()
 
     # checks for longest page
@@ -137,7 +137,7 @@ def is_valid(url):
             + r"|ps|eps|tex|ppt|pptx|doc|docx|xls|xlsx|names"
             + r"|data|dat|exe|bz2|tar|msi|bin|7z|psd|dmg|iso"
             + r"|epub|dll|cnf|tgz|sha1|ppt|ppsx"
-            + r"|thmx|mso|arff|rtf|jar|csv|txt"
+            + r"|thmx|mso|arff|rtf|jar|csv|txt|html"
             + r"|rm|smil|wmv|swf|wma|zip|rar|gz)$", parsed.path.lower())
 
     except TypeError:
