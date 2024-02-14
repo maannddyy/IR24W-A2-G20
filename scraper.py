@@ -52,12 +52,17 @@ def extract_next_links(url, resp):
 
     num_tokens = tokenize(content)
 
+    if len(content) == 0 or (len(content) > 5000000 and num_tokens / len(content) < 0.05):
+        print("not crawled: ", num_tokens, len(content))
+        return list()
+
     # checks for longest page
     global longest_page
     if num_tokens > longest_page[1]:
         longest_page = [url, num_tokens]
 
     #keep track of subdomains
+    
     parsed = urlparse(url)
     parsed_netloc = parsed.netloc.split('.')
     if len(parsed_netloc) > 3 and ".".join(parsed_netloc[-3:]) == "ics.uci.edu":
@@ -102,10 +107,12 @@ def tokenize(content):
     
     # add tokens to frequencies dict
     frequencies = dict()
+    count = 0
     for token in tokens:
         if token not in STOP_WORDS and len(token) > 1:
             token_frequencies[token] = token_frequencies.get(token, 0) + 1   # records frequencies of tokens of all pages crawled
-    return len(tokens)
+            count += 1
+    return count
 
 def is_trap():
     pass
