@@ -5,7 +5,7 @@ Mandy Yan Feng; mandyf; 43024922
 
 
 
-# DELET EVERYTHING BELOW BEFORE SUBMITTING
+# DELETE EVERYTHING BELOW BEFORE SUBMITTING
 ABOUT
 -------------------------
 This is the base implementation of a full crawler that uses a spacetime
